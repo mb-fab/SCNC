@@ -1,0 +1,10 @@
+# generated
+*.pyc
+*.svg
+
+# temporary
+*~
+*.bak
+.*.swp
+.*.lock~
+
