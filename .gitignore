@@ -1,6 +1,7 @@
 # generated
 *.pyc
 *.svg
+*.scad
 
 # temporary
 *~

@@ -34,28 +34,51 @@ class Job:
         self.toolpath.append(step)
 
     #
-    # Export model as SVG
+    # Export job as SVG
     #
     def exportSVG(self, filename):
-        # open file for writing
-        f = open(filename, "w")
-
-        # write SVG preamble
-        f.write('<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n')
-        f.write('<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" ')
-        f.write('width="'+str(self.sizeX)+'" height="'+str(self.sizeY)+'">\n')
+        # SVG preamble
+        svg = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n'
+        svg += '<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" '
+        svg += 'width="'+str(self.sizeX)+'" height="'+str(self.sizeY)+'">\n'
 
         # export all toolpath steps to SVG
         for step in self.toolpath:
-            f.write(step.exportSVG())
+            svg += step.exportSVG()
 
-        # write SVG epilogue
-        f.write('</svg>\n')
-        f.close()
+        # SVG epilogue
+        svg += '</svg>\n'
+        return svg
 
     #
-    # Export model
+    # Export job as OpenSCAD model
+    #
+    def exportSCAD(self, filename):
+        # OpenSCAD preamble
+        scad = '\ndifference()\n{\n'
+
+        # base material
+        scad += '\ttranslate([0, 0, -1*'+str(self.sizeZ)+'])\n'
+        scad += '\tcube(['+str(self.sizeX)+', '+str(self.sizeY)+', '+str(self.sizeZ)+']);\n'
+
+        # OpenSCAD epilogue
+        scad += '}\n'
+        return scad
+
+    #
+    # Export job
     #
     def export(self, filename):
+        # open file for writing
+        f = open(filename, "w")
+        content = ""
+
+        # fill with export content
         if filename[-4:] == ".svg":
-            self.exportSVG(filename)
+            content = self.exportSVG(filename)
+        elif filename[-5:] == ".scad":
+            content = self.exportSCAD(filename)
+
+        # write export content and close file
+        f.write(content)
+        f.close()
