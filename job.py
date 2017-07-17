@@ -42,7 +42,7 @@ class Job:
         svg += '<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" '
         svg += 'width="'+str(self.sizeX)+'" height="'+str(self.sizeY)+'">\n'
 
-        # export all toolpath steps to SVG
+        # export all toolpath steps
         for step in self.toolpath:
             svg += step.exportSVG()
 
@@ -55,11 +55,16 @@ class Job:
     #
     def exportSCAD(self, filename):
         # OpenSCAD preamble
-        scad = '\ndifference()\n{\n'
+        scad = '\n$fn=100;\n\ndifference()\n{\n'
 
         # base material
+        scad += '\t// base material\n'
         scad += '\ttranslate([0, 0, -1*'+str(self.sizeZ)+'])\n'
-        scad += '\tcube(['+str(self.sizeX)+', '+str(self.sizeY)+', '+str(self.sizeZ)+']);\n'
+        scad += '\tcube(['+str(self.sizeX)+', '+str(self.sizeY)+', '+str(self.sizeZ)+']);\n\n'
+
+        # export all toolpath steps
+        for step in self.toolpath:
+            scad += step.exportSCAD()
 
         # OpenSCAD epilogue
         scad += '}\n'
